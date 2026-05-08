@@ -1,13 +1,23 @@
 const navItems = [
-  { label: "Dashboard", href: "/super-admin", active: true },
-  { label: "Agences", href: "/super-admin/agences", active: false },
-  { label: "Utilisateurs", href: "/super-admin/utilisateurs", active: false },
-  { label: "Abonnements", href: "/super-admin/abonnements", active: false },
-  { label: "Litiges", href: "/super-admin/litiges", active: false },
-  { label: "Statistiques", href: "/super-admin/statistiques", active: false },
-  { label: "Notifications", href: "/super-admin/notifications", active: false },
-  { label: "Parametres", href: "/super-admin/parametres", active: false },
+  { label: "Dashboard", href: "/super-admin" },
+  { label: "Agences", href: "/super-admin/agences" },
+  { label: "Utilisateurs", href: "/super-admin/utilisateurs" },
+  { label: "Abonnements", href: "/super-admin/abonnements" },
+  { label: "Litiges", href: "/super-admin/litiges" },
+  { label: "Statistiques", href: "/super-admin/statistiques" },
+  { label: "Notifications", href: "/super-admin/notifications" },
+  { label: "Parametres", href: "/super-admin/parametres" },
 ];
+
+function isActiveRoute(href: string) {
+  const pathname = window.location.pathname;
+
+  if (href === "/super-admin") {
+    return pathname === "/super-admin" || pathname === "/super-admin/dashboard";
+  }
+
+  return pathname.startsWith(href);
+}
 
 function Sidebar() {
   return (
@@ -23,22 +33,26 @@ function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1 px-4 py-6">
-        {navItems.map((item) => (
-          <a
-            key={item.label}
-            href={item.href}
-            className={`flex items-center justify-between rounded-lg px-4 py-3 text-sm font-semibold transition ${
-              item.active
-                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-950/25"
-                : "text-slate-300 hover:bg-white/10 hover:text-white"
-            }`}
-          >
-            <span>{item.label}</span>
-            {item.active ? (
-              <span className="h-2 w-2 rounded-full bg-white" />
-            ) : null}
-          </a>
-        ))}
+        {navItems.map((item) => {
+          const active = isActiveRoute(item.href);
+
+          return (
+            <a
+              key={item.label}
+              href={item.href}
+              className={`flex items-center justify-between rounded-lg px-4 py-3 text-sm font-semibold transition ${
+                active
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-950/25"
+                  : "text-slate-300 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              <span>{item.label}</span>
+              {active ? (
+                <span className="h-2 w-2 rounded-full bg-white" />
+              ) : null}
+            </a>
+          );
+        })}
       </nav>
 
       <div className="border-t border-white/10 p-4">

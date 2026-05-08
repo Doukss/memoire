@@ -8,8 +8,49 @@ export type Agency = {
   registeredAt: string;
 };
 
+export type PlatformUserType = "agence" | "locataire";
+export type PlatformUserStatus = "active" | "suspended";
+
+export type PlatformUser = {
+  id: number;
+  fullName: string;
+  email: string;
+  phone: string;
+  type: PlatformUserType;
+  status: PlatformUserStatus;
+  agencyName: string;
+  joinedAt: string;
+  lastActivity: string;
+};
+
+export type SubscriptionStatus = "active" | "trial" | "expired" | "suspended";
+export type PaymentStatus = "paid" | "pending" | "failed";
+
+export type Subscription = {
+  id: number;
+  agencyName: string;
+  plan: "Starter" | "Professionnel" | "Enterprise";
+  status: SubscriptionStatus;
+  monthlyPrice: number;
+  startedAt: string;
+  nextBillingAt: string;
+};
+
+export type Payment = {
+  id: number;
+  agencyName: string;
+  reference: string;
+  amount: number;
+  status: PaymentStatus;
+  method: "Carte" | "Wave" | "Orange Money" | "Virement";
+  paidAt: string;
+};
+
 export type SuperAdminData = {
   agencies: Agency[];
+  users: PlatformUser[];
+  subscriptions: Subscription[];
+  payments: Payment[];
   totals: {
     tenants: number;
     properties: number;
@@ -72,6 +113,177 @@ const initialData: SuperAdminData = {
       email: "team@ouesthabitat.sn",
       status: "active",
       registeredAt: "2026-04-08",
+    },
+  ],
+  users: [
+    {
+      id: 101,
+      fullName: "Awa Diop",
+      email: "awa.diop@dakarprestige.sn",
+      phone: "+221 77 123 45 67",
+      type: "agence",
+      status: "active",
+      agencyName: "Dakar Prestige Immobilier",
+      joinedAt: "2026-05-02",
+      lastActivity: "Il y a 12 min",
+    },
+    {
+      id: 102,
+      fullName: "Mamadou Fall",
+      email: "mamadou.fall@email.sn",
+      phone: "+221 76 220 19 88",
+      type: "locataire",
+      status: "active",
+      agencyName: "Teranga Homes",
+      joinedAt: "2026-04-30",
+      lastActivity: "Il y a 1 h",
+    },
+    {
+      id: 103,
+      fullName: "Fatou Ndiaye",
+      email: "fatou.ndiaye@terangahomes.sn",
+      phone: "+221 78 409 34 21",
+      type: "agence",
+      status: "active",
+      agencyName: "Teranga Homes",
+      joinedAt: "2026-04-28",
+      lastActivity: "Hier",
+    },
+    {
+      id: 104,
+      fullName: "Cheikh Ba",
+      email: "cheikh.ba@email.sn",
+      phone: "+221 70 998 12 44",
+      type: "locataire",
+      status: "suspended",
+      agencyName: "Sen Immo Gestion",
+      joinedAt: "2026-04-24",
+      lastActivity: "Il y a 3 j",
+    },
+    {
+      id: 105,
+      fullName: "Mariama Sow",
+      email: "mariama.sow@email.sn",
+      phone: "+221 77 410 23 90",
+      type: "locataire",
+      status: "active",
+      agencyName: "Plateau Location Pro",
+      joinedAt: "2026-04-19",
+      lastActivity: "Il y a 5 h",
+    },
+    {
+      id: 106,
+      fullName: "Ousmane Sarr",
+      email: "ousmane.sarr@ouesthabitat.sn",
+      phone: "+221 76 341 88 12",
+      type: "agence",
+      status: "active",
+      agencyName: "Ouest Habitat",
+      joinedAt: "2026-04-08",
+      lastActivity: "Aujourd'hui",
+    },
+  ],
+  subscriptions: [
+    {
+      id: 201,
+      agencyName: "Dakar Prestige Immobilier",
+      plan: "Professionnel",
+      status: "active",
+      monthlyPrice: 15000,
+      startedAt: "2026-05-02",
+      nextBillingAt: "2026-06-02",
+    },
+    {
+      id: 202,
+      agencyName: "Teranga Homes",
+      plan: "Enterprise",
+      status: "active",
+      monthlyPrice: 45000,
+      startedAt: "2026-04-28",
+      nextBillingAt: "2026-05-28",
+    },
+    {
+      id: 203,
+      agencyName: "Sen Immo Gestion",
+      plan: "Starter",
+      status: "suspended",
+      monthlyPrice: 0,
+      startedAt: "2026-04-22",
+      nextBillingAt: "2026-05-22",
+    },
+    {
+      id: 204,
+      agencyName: "Plateau Location Pro",
+      plan: "Professionnel",
+      status: "trial",
+      monthlyPrice: 15000,
+      startedAt: "2026-04-14",
+      nextBillingAt: "2026-05-14",
+    },
+    {
+      id: 205,
+      agencyName: "Ouest Habitat",
+      plan: "Professionnel",
+      status: "active",
+      monthlyPrice: 15000,
+      startedAt: "2026-04-08",
+      nextBillingAt: "2026-06-08",
+    },
+  ],
+  payments: [
+    {
+      id: 301,
+      agencyName: "Teranga Homes",
+      reference: "PAY-2026-0008",
+      amount: 45000,
+      status: "paid",
+      method: "Virement",
+      paidAt: "2026-05-07",
+    },
+    {
+      id: 302,
+      agencyName: "Dakar Prestige Immobilier",
+      reference: "PAY-2026-0007",
+      amount: 15000,
+      status: "paid",
+      method: "Wave",
+      paidAt: "2026-05-05",
+    },
+    {
+      id: 303,
+      agencyName: "Plateau Location Pro",
+      reference: "PAY-2026-0006",
+      amount: 15000,
+      status: "pending",
+      method: "Orange Money",
+      paidAt: "2026-05-03",
+    },
+    {
+      id: 304,
+      agencyName: "Ouest Habitat",
+      reference: "PAY-2026-0005",
+      amount: 15000,
+      status: "paid",
+      method: "Carte",
+      paidAt: "2026-04-29",
+    },
+    {
+      id: 305,
+      agencyName: "Sen Immo Gestion",
+      reference: "PAY-2026-0004",
+      amount: 15000,
+      status: "failed",
+      method: "Carte",
+      paidAt: "2026-04-22",
+    },
+    {
+      id: 306,
+      agencyName: "Teranga Homes",
+      reference: "PAY-2026-0003",
+      amount: 45000,
+      status: "paid",
+      method: "Virement",
+      paidAt: "2026-04-15",
     },
   ],
   totals: {
@@ -158,7 +370,25 @@ export function getSuperAdminData(): SuperAdminData {
   }
 
   try {
-    return JSON.parse(stored) as SuperAdminData;
+    const parsed = JSON.parse(stored) as Partial<SuperAdminData>;
+
+    return {
+      ...initialData,
+      ...parsed,
+      agencies: parsed.agencies ?? initialData.agencies,
+      users: parsed.users ?? initialData.users,
+      subscriptions: parsed.subscriptions ?? initialData.subscriptions,
+      payments: parsed.payments ?? initialData.payments,
+      totals: {
+        ...initialData.totals,
+        ...parsed.totals,
+      },
+      registrations: parsed.registrations ?? initialData.registrations,
+      monthlyRevenue: parsed.monthlyRevenue ?? initialData.monthlyRevenue,
+      disputeRate: parsed.disputeRate ?? initialData.disputeRate,
+      alerts: parsed.alerts ?? initialData.alerts,
+      activities: parsed.activities ?? initialData.activities,
+    };
   } catch {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
     return initialData;
