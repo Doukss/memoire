@@ -30,7 +30,7 @@ const modules = [
   },
 ];
 
-const activity = [
+export const activity = [
   {
     label: "Loyer reçu",
     detail: "Appartement A12 - Dakar Plateau",
@@ -329,7 +329,7 @@ function LandingPage() {
                       />
                     </svg>
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-[#d5bdaf] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </a>
 
                 <a
