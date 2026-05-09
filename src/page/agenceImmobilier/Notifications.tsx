@@ -178,9 +178,8 @@ function Notifications() {
   const stats = useMemo(() => ({
     total: notifications.length,
     unread: notifications.filter((n) => !n.read).length,
-    rappels: notifications.filter((n) => activeTab === "rappels").length,
-    alertes: notifications.filter((n) => activeTab === "alertes").length,
-  }), [notifications, activeTab]);
+    alertes: notifications.filter((n) => n.priority === "high" || n.type === "dispute" || n.type === "system").length,
+  }), [notifications]);
 
   return (
     <AgencyLayout agencyName={data.agency.name}>
