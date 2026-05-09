@@ -15,6 +15,11 @@ import AgenceDashboard from './page/agenceImmobilier/AgenceDashboard'
 import GestionBiens from './page/agenceImmobilier/GestionBiens'
 import GestionLocataires from './page/agenceImmobilier/GestionLocataires'
 import GestionPaiements from './page/agenceImmobilier/GestionPaiements'
+import LitigesAgence from './page/agenceImmobilier/Litiges'
+import StatistiquesAgence from './page/agenceImmobilier/Statistiques'
+import ContratsDocuments from './page/agenceImmobilier/ContratsDocuments'
+import NotificationsAgence from './page/agenceImmobilier/Notifications'
+import Parametres from './page/agenceImmobilier/Parametres'
 
 const routes: Record<string, React.ComponentType> = {
   '/': LandingPage,
@@ -28,11 +33,16 @@ const routes: Record<string, React.ComponentType> = {
   '/super-admin/litiges': Litiges,
   '/super-admin/statistiques': Statistiques,
   '/super-admin/notifications': Notifications,
-  '/agence': AgenceDashboard,
-  '/agence/dashboard': AgenceDashboard,
-  '/agence/biens': GestionBiens,
-  '/agence/locataires': GestionLocataires,
-  '/agence/loyers': GestionPaiements,
+   '/agence': AgenceDashboard,
+   '/agence/dashboard': AgenceDashboard,
+   '/agence/biens': GestionBiens,
+   '/agence/locataires': GestionLocataires,
+   '/agence/loyers': GestionPaiements,
+   '/agence/litiges': LitigesAgence,
+   '/agence/statistiques': StatistiquesAgence,
+   '/agence/contrats': ContratsDocuments,
+   '/agence/notifications': NotificationsAgence,
+   '/agence/parametres': Parametres,
 }
 
 const App = routes[window.location.pathname] ?? LandingPage

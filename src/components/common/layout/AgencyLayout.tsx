@@ -11,7 +11,10 @@ const navItems = [
   { label: "Locataires", href: "/agence/locataires" },
   { label: "Loyers", href: "/agence/loyers" },
   { label: "Litiges", href: "/agence/litiges" },
-  { label: "Revenus", href: "/agence/revenus" },
+  { label: "Statistiques", href: "/agence/statistiques" },
+  { label: "Contrats & Documents", href: "/agence/contrats" },
+  { label: "Notifications", href: "/agence/notifications" },
+  { label: "Paramètres", href: "/agence/parametres" },
 ];
 
 function AgencyLayout({ children, agencyName }: AgencyLayoutProps) {

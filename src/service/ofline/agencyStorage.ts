@@ -1,5 +1,7 @@
 export type RentPaymentStatus = "paid" | "pending" | "late";
 export type AgencyDisputeStatus = "ongoing" | "resolved";
+export type ContractStatus = "active" | "expired" | "terminated";
+export type ReceiptStatus = "pending" | "generated" | "sent";
 
 export type AgencyProperty = {
   id: number;
@@ -37,6 +39,27 @@ export type AgencyDispute = {
   status: AgencyDisputeStatus;
 };
 
+export type AgencyContract = {
+  id: number;
+  tenantName: string;
+  propertyName: string;
+  startDate: string;
+  endDate: string;
+  monthlyRent: number;
+  status: ContractStatus;
+  signed: boolean;
+};
+
+export type AgencyReceipt = {
+  id: number;
+  tenantName: string;
+  propertyName: string;
+  period: string;
+  amount: number;
+  issuedAt: string;
+  status: ReceiptStatus;
+};
+
 export type AgencyActivity = {
   id: number;
   title: string;
@@ -55,6 +78,8 @@ export type AgencyDashboardData = {
   tenants: AgencyTenant[];
   payments: RentPayment[];
   disputes: AgencyDispute[];
+  contracts: AgencyContract[];
+  receipts: AgencyReceipt[];
   activities: AgencyActivity[];
   monthlyRevenue: Array<{ month: string; revenue: number }>;
 };
@@ -180,30 +205,91 @@ const initialData: AgencyDashboardData = {
       status: "pending",
     },
   ],
-  disputes: [
-    {
-      id: 1,
-      tenantName: "Mamadou Fall",
-      subject: "Retard de paiement loyer",
-      date: "2026-05-08",
-      status: "ongoing",
-    },
-    {
-      id: 2,
-      tenantName: "Mariama Sow",
-      subject: "Degat plomberie",
-      date: "2026-05-07",
-      status: "ongoing",
-    },
-    {
-      id: 3,
-      tenantName: "Aminata Gueye",
-      subject: "Quittance manquante",
-      date: "2026-04-25",
-      status: "resolved",
-    },
-  ],
-  activities: [
+   disputes: [
+     {
+       id: 1,
+       tenantName: "Mamadou Fall",
+       subject: "Retard de paiement loyer",
+       date: "2026-05-08",
+       status: "ongoing",
+     },
+     {
+       id: 2,
+       tenantName: "Mariama Sow",
+       subject: "Degat plomberie",
+       date: "2026-05-07",
+       status: "ongoing",
+     },
+     {
+       id: 3,
+       tenantName: "Aminata Gueye",
+       subject: "Quittance manquante",
+       date: "2026-04-25",
+       status: "resolved",
+     },
+   ],
+   contracts: [
+     {
+       id: 1,
+       tenantName: "Mamadou Fall",
+       propertyName: "Appartement A12",
+       startDate: "2026-02-01",
+       endDate: "2027-01-31",
+       monthlyRent: 450000,
+       status: "active",
+       signed: true,
+     },
+     {
+       id: 2,
+       tenantName: "Mariama Sow",
+       propertyName: "Studio B4",
+       startDate: "2026-03-01",
+       endDate: "2027-02-28",
+       monthlyRent: 300000,
+       status: "active",
+       signed: true,
+     },
+     {
+       id: 3,
+       tenantName: "Aminata Gueye",
+       propertyName: "Bureau P3",
+       startDate: "2026-01-01",
+       endDate: "2026-12-31",
+       monthlyRent: 600000,
+       status: "active",
+       signed: true,
+     },
+   ],
+   receipts: [
+     {
+       id: 1,
+       tenantName: "Mamadou Fall",
+       propertyName: "Appartement A12",
+       period: "Mai 2026",
+       amount: 450000,
+       issuedAt: "2026-05-01",
+       status: "generated",
+     },
+     {
+       id: 2,
+       tenantName: "Mariama Sow",
+       propertyName: "Studio B4",
+       period: "Mai 2026",
+       amount: 300000,
+       issuedAt: "2026-05-01",
+       status: "sent",
+     },
+     {
+       id: 3,
+       tenantName: "Aminata Gueye",
+       propertyName: "Bureau P3",
+       period: "Mai 2026",
+       amount: 600000,
+       issuedAt: "2026-05-01",
+       status: "generated",
+     },
+   ],
+   activities: [
     {
       id: 1,
       title: "Nouveau locataire ajouté",
@@ -263,6 +349,8 @@ export function getAgencyDashboardData(): AgencyDashboardData {
       })),
       payments: parsed.payments ?? initialData.payments,
       disputes: parsed.disputes ?? initialData.disputes,
+      contracts: parsed.contracts ?? initialData.contracts,
+      receipts: parsed.receipts ?? initialData.receipts,
       activities: parsed.activities ?? initialData.activities,
       monthlyRevenue: parsed.monthlyRevenue ?? initialData.monthlyRevenue,
     };
