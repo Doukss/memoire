@@ -8,6 +8,13 @@ import AdminDashboard from './page/superAdmin/AdminDashboard'
 import GestionDesAgences from './page/superAdmin/Gestion_des_agences'
 import Utilisateures from './page/superAdmin/Utilisateures'
 import Abonnements from './page/superAdmin/Abonnements'
+import Litiges from './page/superAdmin/Litiges'
+import Statistiques from './page/superAdmin/Statistiques'
+import Notifications from './page/superAdmin/Notifications'
+import AgenceDashboard from './page/agenceImmobilier/AgenceDashboard'
+import GestionBiens from './page/agenceImmobilier/GestionBiens'
+import GestionLocataires from './page/agenceImmobilier/GestionLocataires'
+import GestionPaiements from './page/agenceImmobilier/GestionPaiements'
 
 const routes: Record<string, React.ComponentType> = {
   '/': LandingPage,
@@ -18,6 +25,14 @@ const routes: Record<string, React.ComponentType> = {
   '/super-admin/agences': GestionDesAgences,
   '/super-admin/utilisateurs': Utilisateures,
   '/super-admin/abonnements': Abonnements,
+  '/super-admin/litiges': Litiges,
+  '/super-admin/statistiques': Statistiques,
+  '/super-admin/notifications': Notifications,
+  '/agence': AgenceDashboard,
+  '/agence/dashboard': AgenceDashboard,
+  '/agence/biens': GestionBiens,
+  '/agence/locataires': GestionLocataires,
+  '/agence/loyers': GestionPaiements,
 }
 
 const App = routes[window.location.pathname] ?? LandingPage

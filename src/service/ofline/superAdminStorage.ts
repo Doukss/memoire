@@ -46,11 +46,44 @@ export type Payment = {
   paidAt: string;
 };
 
+export type DisputeStatus = "ongoing" | "resolved";
+export type DisputePriority = "low" | "medium" | "high";
+
+export type Dispute = {
+  id: number;
+  reference: string;
+  title: string;
+  agencyName: string;
+  tenantName: string;
+  property: string;
+  status: DisputeStatus;
+  priority: DisputePriority;
+  openedAt: string;
+  updatedAt: string;
+  description: string;
+};
+
+export type NotificationType = "agency" | "payment" | "dispute" | "system";
+export type NotificationPriority = "low" | "medium" | "high";
+
+export type PlatformNotification = {
+  id: number;
+  title: string;
+  message: string;
+  type: NotificationType;
+  priority: NotificationPriority;
+  read: boolean;
+  createdAt: string;
+  target: string;
+};
+
 export type SuperAdminData = {
   agencies: Agency[];
   users: PlatformUser[];
   subscriptions: Subscription[];
   payments: Payment[];
+  disputes: Dispute[];
+  notifications: PlatformNotification[];
   totals: {
     tenants: number;
     properties: number;
@@ -286,6 +319,135 @@ const initialData: SuperAdminData = {
       paidAt: "2026-04-15",
     },
   ],
+  disputes: [
+    {
+      id: 401,
+      reference: "LIT-2026-0012",
+      title: "Retard de paiement loyer",
+      agencyName: "Dakar Prestige Immobilier",
+      tenantName: "Mamadou Fall",
+      property: "Appartement A12 - Dakar Plateau",
+      status: "ongoing",
+      priority: "high",
+      openedAt: "2026-05-06",
+      updatedAt: "2026-05-08",
+      description:
+        "Le locataire accuse un retard de paiement de 12 jours sur le loyer mensuel.",
+    },
+    {
+      id: 402,
+      reference: "LIT-2026-0011",
+      title: "Degat plomberie",
+      agencyName: "Teranga Homes",
+      tenantName: "Mariama Sow",
+      property: "Studio B4 - Almadies",
+      status: "ongoing",
+      priority: "medium",
+      openedAt: "2026-05-03",
+      updatedAt: "2026-05-07",
+      description:
+        "Fuite signalee dans la salle de bain, intervention technique en attente.",
+    },
+    {
+      id: 403,
+      reference: "LIT-2026-0010",
+      title: "Caution contestee",
+      agencyName: "Sen Immo Gestion",
+      tenantName: "Cheikh Ba",
+      property: "Villa C7 - Mermoz",
+      status: "ongoing",
+      priority: "high",
+      openedAt: "2026-04-29",
+      updatedAt: "2026-05-04",
+      description:
+        "Le locataire conteste une retenue sur caution apres etat des lieux.",
+    },
+    {
+      id: 404,
+      reference: "LIT-2026-0009",
+      title: "Quittance manquante",
+      agencyName: "Plateau Location Pro",
+      tenantName: "Aminata Gueye",
+      property: "Bureau P3 - Plateau",
+      status: "resolved",
+      priority: "low",
+      openedAt: "2026-04-20",
+      updatedAt: "2026-04-25",
+      description:
+        "La quittance du mois d'avril a ete generee et envoyee au locataire.",
+    },
+    {
+      id: 405,
+      reference: "LIT-2026-0008",
+      title: "Travaux non finalises",
+      agencyName: "Ouest Habitat",
+      tenantName: "Ousmane Sarr",
+      property: "Maison R2 - Ouakam",
+      status: "resolved",
+      priority: "medium",
+      openedAt: "2026-04-14",
+      updatedAt: "2026-04-21",
+      description:
+        "Les travaux de remise en etat ont ete valides par le proprietaire.",
+    },
+  ],
+  notifications: [
+    {
+      id: 501,
+      title: "Nouvelle agence inscrite",
+      message:
+        "Ouest Habitat a finalise son inscription et attend la validation administrative.",
+      type: "agency",
+      priority: "medium",
+      read: false,
+      createdAt: "2026-05-09T09:30:00",
+      target: "Ouest Habitat",
+    },
+    {
+      id: 502,
+      title: "Paiement echoue",
+      message:
+        "Le paiement PAY-2026-0004 de Sen Immo Gestion a echoue. Une relance est recommandee.",
+      type: "payment",
+      priority: "high",
+      read: false,
+      createdAt: "2026-05-08T16:15:00",
+      target: "Sen Immo Gestion",
+    },
+    {
+      id: 503,
+      title: "Litige prioritaire",
+      message:
+        "Le litige LIT-2026-0012 est marque en priorite haute et reste en cours.",
+      type: "dispute",
+      priority: "high",
+      read: false,
+      createdAt: "2026-05-08T11:45:00",
+      target: "Dakar Prestige Immobilier",
+    },
+    {
+      id: 504,
+      title: "Rapport mensuel disponible",
+      message:
+        "Le rapport de performance mensuel peut etre consulte dans la section Statistiques.",
+      type: "system",
+      priority: "low",
+      read: true,
+      createdAt: "2026-05-07T08:00:00",
+      target: "Plateforme",
+    },
+    {
+      id: 505,
+      title: "Abonnement en essai",
+      message:
+        "Plateau Location Pro arrive bientot a la fin de sa periode d'essai.",
+      type: "payment",
+      priority: "medium",
+      read: true,
+      createdAt: "2026-05-06T14:20:00",
+      target: "Plateau Location Pro",
+    },
+  ],
   totals: {
     tenants: 1847,
     properties: 642,
@@ -379,6 +541,8 @@ export function getSuperAdminData(): SuperAdminData {
       users: parsed.users ?? initialData.users,
       subscriptions: parsed.subscriptions ?? initialData.subscriptions,
       payments: parsed.payments ?? initialData.payments,
+      disputes: parsed.disputes ?? initialData.disputes,
+      notifications: parsed.notifications ?? initialData.notifications,
       totals: {
         ...initialData.totals,
         ...parsed.totals,
