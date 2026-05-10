@@ -55,13 +55,22 @@ function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-white/10 p-4">
+      <div className="border-t border-white/10 p-4 space-y-3">
         <div className="rounded-lg bg-white/10 p-4">
           <p className="text-sm font-bold">Super Admin</p>
           <p className="mt-1 text-xs leading-5 text-slate-300">
             Vue globale de la plateforme, agences, revenus et incidents.
           </p>
         </div>
+        <button
+          onClick={() => { window.location.href = '/login'; }}
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
+        >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          <span>Déconnexion</span>
+        </button>
       </div>
     </aside>
   );

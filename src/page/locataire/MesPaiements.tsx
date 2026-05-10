@@ -160,13 +160,14 @@ function MesPaiements() {
                   <th className="px-5 py-3 font-bold">Date</th>
                   <th className="px-5 py-3 font-bold">Statut</th>
                   <th className="px-5 py-3 font-bold">Quittance</th>
+                  <th className="px-5 py-3 font-bold">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {paymentsWithReceipt.map((payment) => (
                   <tr key={payment.id} className="hover:bg-slate-50">
                     <td className="px-5 py-4 text-sm font-semibold text-slate-950">
-                      {formatMonth(new Date(payment.date).getFullYear(), new Date(payment.date).getMonth() + 1)}
+                      {new Intl.DateTimeFormat("fr-FR", { month: "long", year: "numeric" }).format(new Date(payment.date))}
                     </td>
                     <td className="px-5 py-4 text-sm font-bold text-slate-950">
                       {currencyFormatter.format(payment.amount)}
@@ -192,6 +193,16 @@ function MesPaiements() {
                         </button>
                       ) : (
                         <span className="text-sm text-slate-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-4">
+                      {(payment.status === "late" || payment.status === "pending") && (
+                        <a
+                          href={`/locataire/paiement-en-ligne?amount=${payment.amount}&property=${encodeURIComponent(payment.propertyName)}&date=${payment.date}`}
+                          className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700"
+                        >
+                          Payer maintenant
+                        </a>
                       )}
                     </td>
                   </tr>

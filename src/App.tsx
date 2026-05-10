@@ -23,6 +23,8 @@ import MonLogement from './page/locataire/MonLogement'
 import MesDocuments from './page/locataire/MesDocuments'
 import ContacterAgence from './page/locataire/ContacterAgence'
 import MonProfil from './page/locataire/MonProfil'
+import Chat from './page/locataire/Chat'
+import PaiementEnLigne from './page/locataire/PaiementEnLigne'
 
 function App() {
   const pathname = window.location.pathname;
@@ -54,6 +56,8 @@ function App() {
     '/locataire/paiements': MesPaiements,
     '/locataire/logement': MonLogement,
     '/locataire/documents': MesDocuments,
+    '/locataire/chat': Chat,
+    '/locataire/paiement-en-ligne': PaiementEnLigne,
     '/locataire/contact': ContacterAgence,
     '/locataire/profil': MonProfil,
   };

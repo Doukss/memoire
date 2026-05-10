@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import TenantLayout from "../../components/common/layout/TenantLayout";
-import { getAgencyDashboardData } from "../../service/ofline/agencyStorage";
+import SignatureCanvas from "../../components/common/ui/SignatureCanvas";
+import { getAgencyDashboardData, saveAgencyDashboardData } from "../../service/ofline/agencyStorage";
 
 const currencyFormatter = new Intl.NumberFormat("fr-FR", {
   style: "currency",
@@ -17,11 +18,38 @@ function formatDate(value: string) {
 }
 
 function MesDocuments() {
-  const [data] = useState(() => getAgencyDashboardData());
-  
+  const [data, setData] = useState(() => getAgencyDashboardData());
+  const [signingContractId, setSigningContractId] = useState<number | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  // Simulation: on prend le premier locataire actif comme "locataire connecté"
   const tenant = useMemo(() => {
     return data.tenants.find((t) => t.active) || data.tenants[0];
   }, [data.tenants]);
+
+  function persist(nextData: typeof data) {
+    setData(nextData);
+    saveAgencyDashboardData(nextData);
+  }
+
+  function handleSignatureSave(contractId: number, _dataUrl: string) {
+    setSaved(true);
+    // Marquer le contrat comme signé
+    const newData = { ...data };
+    const contractIndex = newData.contracts.findIndex((c) => c.id === contractId);
+    if (contractIndex >= 0) {
+      newData.contracts[contractIndex] = { ...newData.contracts[contractIndex], signed: true };
+      persist(newData);
+    }
+    setTimeout(() => {
+      closeSignatureModal();
+    }, 1500);
+  }
+
+  function closeSignatureModal() {
+    setSigningContractId(null);
+    setSaved(false);
+  }
 
   const contracts = useMemo(() => {
     return data.contracts.filter((c) => c.tenantName === tenant.fullName);
@@ -64,7 +92,22 @@ function MesDocuments() {
                     }`}>
                       {contract.status === "active" ? "Actif" : contract.status === "expired" ? "Expiré" : "Résilié"}
                     </span>
-                    <button className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-indigo-700">
+                    {contract.signed ? (
+                      <button
+                        disabled
+                        className="rounded-lg bg-emerald-100 px-3 py-2 text-xs font-bold text-emerald-700 cursor-default"
+                      >
+                        ✅ Signé
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setSigningContractId(contract.id)}
+                        className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-indigo-700"
+                      >
+                        Signer
+                      </button>
+                    )}
+                    <button className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50">
                       Voir PDF
                     </button>
                   </div>
@@ -127,6 +170,39 @@ function MesDocuments() {
             )}
           </div>
         </div>
+
+        {/* Modal de signature électronique */}
+        {signingContractId && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl">
+              <h3 className="text-lg font-bold text-slate-950">Signer le contrat</h3>
+              <p className="mt-1 text-sm text-slate-500">
+                Dessinez votre signature ci-dessous.
+              </p>
+              <div className="mt-4">
+                <SignatureCanvas
+                  width={500}
+                  height={200}
+                  onSave={(dataUrl) => handleSignatureSave(signingContractId, dataUrl)}
+                  onClear={() => {}}
+                />
+              </div>
+              {saved && (
+                <div className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700">
+                  ✅ Contrat signé avec succès !
+                </div>
+              )}
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  onClick={closeSignatureModal}
+                  className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
     </TenantLayout>
   );
