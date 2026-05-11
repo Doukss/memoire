@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useAuth } from "../../../context/AuthContext";
 
 type AgencyLayoutProps = {
   children: ReactNode;
@@ -18,6 +19,8 @@ const navItems = [
 ];
 
 function AgencyLayout({ children, agencyName }: AgencyLayoutProps) {
+  const { logout } = useAuth();
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-950">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-slate-200 bg-white lg:flex lg:flex-col">
@@ -58,7 +61,7 @@ function AgencyLayout({ children, agencyName }: AgencyLayoutProps) {
 
         <div className="border-t border-slate-200 p-4">
           <button
-            onClick={() => { window.location.href = '/login'; }}
+            onClick={logout}
             className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

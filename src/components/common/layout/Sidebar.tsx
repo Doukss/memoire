@@ -1,3 +1,5 @@
+import { useAuth } from "../../../context/AuthContext";
+
 const navItems = [
   { label: "Dashboard", href: "/super-admin" },
   { label: "Agences", href: "/super-admin/agences" },
@@ -20,6 +22,8 @@ function isActiveRoute(href: string) {
 }
 
 function Sidebar() {
+  const { logout } = useAuth();
+
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-slate-200 bg-slate-950 text-white lg:flex lg:flex-col">
       <div className="flex h-20 items-center gap-3 border-b border-white/10 px-6">
@@ -63,7 +67,7 @@ function Sidebar() {
           </p>
         </div>
         <button
-          onClick={() => { window.location.href = '/login'; }}
+          onClick={logout}
           className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
         >
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

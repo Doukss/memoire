@@ -145,6 +145,12 @@ function LandingPage() {
                 Fonctionnalités
               </a>
               <a
+                href="#how-it-works"
+                className="text-gray-600 hover:text-indigo-600 transition-colors font-medium"
+              >
+                Comment ça marche
+              </a>
+              <a
                 href="#pricing"
                 className="text-gray-600 hover:text-indigo-600 transition-colors font-medium"
               >
@@ -211,12 +217,18 @@ function LandingPage() {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-200 animate-fade-in-up">
               <div className="flex flex-col gap-3">
-                <a
-                  href="#features"
-                  className="text-gray-600 hover:text-indigo-600 transition-colors font-medium py-2"
-                >
-                  Fonctionnalités
-                </a>
+<a
+                   href="#features"
+                   className="text-gray-600 hover:text-indigo-600 transition-colors font-medium py-2"
+                 >
+                   Fonctionnalités
+                 </a>
+                 <a
+                   href="#how-it-works"
+                   className="text-gray-600 hover:text-indigo-600 transition-colors font-medium py-2"
+                 >
+                   Comment ça marche
+                 </a>
                 <a
                   href="#pricing"
                   className="text-gray-600 hover:text-indigo-600 transition-colors font-medium py-2"
@@ -454,9 +466,87 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Rest of your sections remain the same */}
+{/* How It Works Section */}
+      <section id="how-it-works" className="bg-white py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="text-center max-w-3xl mx-auto">
+            <span className="text-sm font-semibold text-indigo-600 uppercase tracking-wider">
+              Comment ça marche
+            </span>
+            <h2 className="mt-2 text-balance text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Simple, rapide et efficace
+            </h2>
+            <p className="mt-3 text-pretty text-lg leading-relaxed text-gray-600">
+              En 3 étapes, transformez votre gestion immobilière avec KerManager.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            <div className="relative text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+                1
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Créez votre compte
+              </h3>
+              <p className="text-gray-600">
+                Inscrivez votre agence en quelques clics. Aucune carte bancaire requise pour l'essai gratuit.
+              </p>
+              <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-indigo-300 to-transparent" />
+            </div>
+
+            <div className="relative text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+                2
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Ajoutez vos biens
+              </h3>
+              <p className="text-gray-600">
+                Importez ou saisissez vos propriétés, locataires et contrats en quelques minutes.
+              </p>
+              <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-indigo-300 to-transparent" />
+            </div>
+
+            <div className="text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 text-white text-2xl font-bold shadow-lg mx-auto mb-4">
+                3
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Gérez et automatisez
+              </h3>
+              <p className="text-gray-600">
+                Automatisez les relances, suivez les paiements et résolvez les litiges en temps réel.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center">
+            <a
+              href="/register"
+              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all hover:shadow-xl hover:shadow-indigo-600/30 hover:scale-105"
+            >
+              Commencer maintenant
+              <svg
+                className="ml-2 h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Metrics Section */}
-      <section className="bg-gradient-to-br from-indigo-50 via-white to-indigo-50 py-20">
+       <section className="bg-gradient-to-br from-indigo-50 via-white to-indigo-50 py-20">
         <div className="mx-auto max-w-6xl px-4">
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-balance text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
