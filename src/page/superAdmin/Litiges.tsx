@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import SuperAdminLayout from "../../components/common/layout/SuperAdminLayout";
+import Pagination from "../../components/common/ui/Pagination";
 import {
   getSuperAdminData,
   type Dispute,
@@ -57,6 +58,8 @@ function Litiges() {
   const [selectedDisputeId, setSelectedDisputeId] = useState<number | null>(
     data.disputes[0]?.id ?? null,
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const agencies = useMemo(
     () => [...new Set(data.disputes.map((dispute) => dispute.agencyName))],
@@ -87,6 +90,12 @@ function Litiges() {
         return matchesAgency && matchesStatus && matchesSearch;
       });
   }, [agencyFilter, data.disputes, search, statusFilter]);
+
+  const totalPages = Math.ceil(disputes.length / itemsPerPage);
+  const paginatedDisputes = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return disputes.slice(startIndex, startIndex + itemsPerPage);
+  }, [disputes, currentPage, itemsPerPage]);
 
   const selectedDispute = useMemo(
     () =>
@@ -157,13 +166,19 @@ function Litiges() {
               <div className="grid gap-3 sm:grid-cols-3">
                 <input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setCurrentPage(1);
+                  }}
                   placeholder="Rechercher"
                   className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                 />
                 <select
                   value={agencyFilter}
-                  onChange={(event) => setAgencyFilter(event.target.value)}
+                  onChange={(event) => {
+                    setAgencyFilter(event.target.value);
+                    setCurrentPage(1);
+                  }}
                   className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                 >
                   <option value="all">Toutes les agences</option>
@@ -175,9 +190,10 @@ function Litiges() {
                 </select>
                 <select
                   value={statusFilter}
-                  onChange={(event) =>
-                    setStatusFilter(event.target.value as "all" | DisputeStatus)
-                  }
+                  onChange={(event) => {
+                    setStatusFilter(event.target.value as "all" | DisputeStatus);
+                    setCurrentPage(1);
+                  }}
                   className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                 >
                   <option value="all">Tous les statuts</option>
@@ -202,7 +218,7 @@ function Litiges() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {disputes.map((dispute: Dispute) => (
+                {paginatedDisputes.map((dispute: Dispute) => (
                   <tr key={dispute.id} className="hover:bg-slate-50">
                     <td className="px-5 py-4 font-bold text-slate-950">
                       {dispute.reference}
@@ -261,6 +277,12 @@ function Litiges() {
               </div>
             ) : null}
           </div>
+          
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
 
         <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">

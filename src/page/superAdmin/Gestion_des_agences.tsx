@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import SuperAdminLayout from "../../components/common/layout/SuperAdminLayout";
+import Pagination from "../../components/common/ui/Pagination";
 import {
   getSuperAdminData,
   saveSuperAdminData,
@@ -77,6 +78,8 @@ function GestionDesAgences() {
   const [selectedAgencyId, setSelectedAgencyId] = useState<number | null>(
     data.agencies[0]?.id ?? null,
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const agencies = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -98,6 +101,12 @@ function GestionDesAgences() {
         return matchesStatus && matchesSearch;
       });
   }, [data.agencies, search, statusFilter]);
+
+  const totalPages = Math.ceil(agencies.length / itemsPerPage);
+  const paginatedAgencies = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return agencies.slice(startIndex, startIndex + itemsPerPage);
+  }, [agencies, currentPage, itemsPerPage]);
 
   const selectedAgency = useMemo(
     () =>
@@ -161,6 +170,7 @@ function GestionDesAgences() {
     persist(nextData);
     setForm(emptyForm);
     setSelectedAgencyId(nextAgency.id);
+    setCurrentPage(1);
   }
 
   function toggleAgencyStatus(agencyId: number) {
@@ -196,7 +206,6 @@ function GestionDesAgences() {
     syncAgencyUser({ ...target, status: nextStatus });
     persist(nextData);
     
-    // Notifier les autres onglets/instances de la mise à jour
     window.dispatchEvent(new CustomEvent("agencyStatusChanged", { detail: { email: target.email, status: nextStatus } }));
   }
 
@@ -242,17 +251,21 @@ function GestionDesAgences() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setCurrentPage(1);
+                  }}
                   placeholder="Rechercher une agence"
                   className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 sm:w-64"
                 />
                 <select
                   value={statusFilter}
-                  onChange={(event) =>
+                  onChange={(event) => {
                     setStatusFilter(
                       event.target.value as "all" | Agency["status"],
-                    )
-                  }
+                    );
+                    setCurrentPage(1);
+                  }}
                   className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                 >
                   <option value="all">Tous les statuts</option>
@@ -275,7 +288,7 @@ function GestionDesAgences() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {agencies.map((agency) => (
+                {paginatedAgencies.map((agency) => (
                   <tr key={agency.id} className="hover:bg-slate-50">
                     <td className="px-5 py-4">
                       <button
@@ -327,6 +340,12 @@ function GestionDesAgences() {
               </div>
             ) : null}
           </div>
+          
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
 
         <div className="grid gap-6">

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import SuperAdminLayout from "../../components/common/layout/SuperAdminLayout";
+import Pagination from "../../components/common/ui/Pagination";
 import {
   getSuperAdminData,
   type PlatformUser,
@@ -50,6 +51,8 @@ function Utilisateures() {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(
     data.users[0]?.id ?? null,
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const users = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -71,6 +74,12 @@ function Utilisateures() {
         return matchesType && matchesSearch;
       });
   }, [data.users, search, typeFilter]);
+
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return users.slice(startIndex, startIndex + itemsPerPage);
+  }, [users, currentPage, itemsPerPage]);
 
   const selectedUser = useMemo(
     () =>
@@ -135,15 +144,19 @@ function Utilisateures() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setCurrentPage(1);
+                  }}
                   placeholder="Rechercher un utilisateur"
                   className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 sm:w-72"
                 />
                 <select
                   value={typeFilter}
-                  onChange={(event) =>
-                    setTypeFilter(event.target.value as "all" | PlatformUserType)
-                  }
+                  onChange={(event) => {
+                    setTypeFilter(event.target.value as "all" | PlatformUserType);
+                    setCurrentPage(1);
+                  }}
                   className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                 >
                   <option value="all">Tous les types</option>
@@ -167,7 +180,7 @@ function Utilisateures() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {users.map((user) => (
+                {paginatedUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-slate-50">
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
@@ -228,6 +241,12 @@ function Utilisateures() {
               </div>
             ) : null}
           </div>
+          
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
 
         <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">

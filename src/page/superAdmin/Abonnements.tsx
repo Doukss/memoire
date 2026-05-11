@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import SuperAdminLayout from "../../components/common/layout/SuperAdminLayout";
+import Pagination from "../../components/common/ui/Pagination";
 import {
   getSuperAdminData,
   saveSuperAdminData,
@@ -86,6 +87,9 @@ function Abonnements() {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<
     number | null
   >(data.subscriptions[0]?.id ?? null);
+  const [subscriptionsPage, setSubscriptionsPage] = useState(1);
+  const [paymentsPage, setPaymentsPage] = useState(1);
+  const itemsPerPage = 10;
 
   const persist = (nextData: SuperAdminData) => {
     setData(nextData);
@@ -103,7 +107,6 @@ function Abonnements() {
       subscriptions: data.subscriptions.map((sub) =>
         sub.id === subscriptionId ? { ...sub, status: nextStatus } : sub,
       ),
-      // Mettre à jour aussi le statut de l'agence
       agencies: data.agencies.map((agency) =>
         agency.name === target.agencyName 
           ? { ...agency, status: nextStatus === "active" ? "active" : "suspended" } 
@@ -121,7 +124,6 @@ function Abonnements() {
       ],
     };
 
-    // Find agency email from agencies list and sync
     const agency = data.agencies.find((a) => a.name === target.agencyName);
     if (agency) {
       syncAgencyUser(agency.email, nextStatus === "active" ? "active" : "suspended");
@@ -153,6 +155,12 @@ function Abonnements() {
         ),
     [data.payments, paymentFilter],
   );
+
+  const paymentsTotalPages = Math.ceil(filteredPayments.length / itemsPerPage);
+  const paginatedPayments = useMemo(() => {
+    const startIndex = (paymentsPage - 1) * itemsPerPage;
+    return filteredPayments.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredPayments, paymentsPage, itemsPerPage]);
 
   const recentPayments = filteredPayments.slice(0, 4);
 
@@ -222,7 +230,7 @@ function Abonnements() {
                 Abonnements
               </h2>
               <p className="mt-1 text-sm text-slate-500">
-                Plans actifs, essais et agences suspendues.
+                Plans actifs, essais et agences suspendées.
               </p>
             </div>
 
@@ -303,9 +311,10 @@ function Abonnements() {
               </div>
               <select
                 value={paymentFilter}
-                onChange={(event) =>
-                  setPaymentFilter(event.target.value as "all" | PaymentStatus)
-                }
+                onChange={(event) => {
+                  setPaymentFilter(event.target.value as "all" | PaymentStatus);
+                  setPaymentsPage(1);
+                }}
                 className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
               >
                 <option value="all">Tous les paiements</option>
@@ -328,7 +337,7 @@ function Abonnements() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filteredPayments.map((payment: Payment) => (
+                  {paginatedPayments.map((payment: Payment) => (
                     <tr key={payment.id} className="hover:bg-slate-50">
                       <td className="px-5 py-4 font-bold text-slate-950">
                         {payment.reference}
@@ -358,7 +367,19 @@ function Abonnements() {
                   ))}
                 </tbody>
               </table>
+
+              {filteredPayments.length === 0 ? (
+                <div className="p-8 text-center text-sm font-semibold text-slate-500">
+                  Aucun paiement ne correspond aux filtres.
+                </div>
+              ) : null}
             </div>
+            
+            <Pagination
+              currentPage={paymentsPage}
+              totalPages={paymentsTotalPages}
+              onPageChange={setPaymentsPage}
+            />
           </div>
         </div>
 

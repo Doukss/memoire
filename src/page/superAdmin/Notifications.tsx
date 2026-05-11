@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import SuperAdminLayout from "../../components/common/layout/SuperAdminLayout";
+import Pagination from "../../components/common/ui/Pagination";
 import {
   getSuperAdminData,
   saveSuperAdminData,
@@ -72,6 +73,8 @@ function Notifications() {
   const [selectedNotificationId, setSelectedNotificationId] = useState<
     number | null
   >(data.notifications[0]?.id ?? null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const notifications = useMemo(
     () =>
@@ -93,6 +96,12 @@ function Notifications() {
         }),
     [data.notifications, readFilter, typeFilter],
   );
+
+  const totalPages = Math.ceil(notifications.length / itemsPerPage);
+  const paginatedNotifications = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return notifications.slice(startIndex, startIndex + itemsPerPage);
+  }, [notifications, currentPage, itemsPerPage]);
 
   const selectedNotification = useMemo(
     () =>
@@ -196,9 +205,10 @@ function Notifications() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <select
                 value={typeFilter}
-                onChange={(event) =>
-                  setTypeFilter(event.target.value as "all" | NotificationType)
-                }
+                onChange={(event) => {
+                  setTypeFilter(event.target.value as "all" | NotificationType);
+                  setCurrentPage(1);
+                }}
                 className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
               >
                 <option value="all">Tous les types</option>
@@ -209,9 +219,10 @@ function Notifications() {
               </select>
               <select
                 value={readFilter}
-                onChange={(event) =>
-                  setReadFilter(event.target.value as "all" | "unread" | "read")
-                }
+                onChange={(event) => {
+                  setReadFilter(event.target.value as "all" | "unread" | "read");
+                  setCurrentPage(1);
+                }}
                 className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
               >
                 <option value="all">Toutes</option>
@@ -228,7 +239,7 @@ function Notifications() {
           </div>
 
           <div className="divide-y divide-slate-100">
-            {notifications.map((notification: PlatformNotification) => (
+            {paginatedNotifications.map((notification: PlatformNotification) => (
               <button
                 key={notification.id}
                 onClick={() => setSelectedNotificationId(notification.id)}
@@ -277,6 +288,12 @@ function Notifications() {
               </div>
             ) : null}
           </div>
+          
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
 
         <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
