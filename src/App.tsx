@@ -20,6 +20,7 @@ import StatistiquesAgence from "./page/agenceImmobilier/Statistiques";
 import ContratsDocuments from "./page/agenceImmobilier/ContratsDocuments";
 import NotificationsAgence from "./page/agenceImmobilier/Notifications";
 import Parametres from "./page/agenceImmobilier/Parametres";
+import AbonnementAgence from "./page/agenceImmobilier/Abonnement";
 import LocataireDashboard from "./page/locataire/locataireDashboard";
 import MesPaiements from "./page/locataire/MesPaiements";
 import MonLogement from "./page/locataire/MonLogement";
@@ -28,6 +29,7 @@ import ContacterAgence from "./page/locataire/ContacterAgence";
 import MonProfil from "./page/locataire/MonProfil";
 import Chat from "./page/locataire/Chat";
 import PaiementEnLigne from "./page/locataire/PaiementEnLigne";
+import AgencySuspended from "./page/agenceImmobilier/AgencySuspended";
 
 function App() {
   const { user, isLoading } = useAuth();
@@ -65,6 +67,7 @@ function App() {
     "/super-admin/parametres": AdminDashboard,
 
     // Agence
+    "/agence/suspendu": AgencySuspended,
     "/agence": AgenceDashboard,
     "/agence/dashboard": AgenceDashboard,
     "/agence/biens": GestionBiens,
@@ -72,6 +75,7 @@ function App() {
     "/agence/loyers": GestionPaiements,
     "/agence/litiges": LitigesAgence,
     "/agence/statistiques": StatistiquesAgence,
+    "/agence/abonnement": AbonnementAgence,
     "/agence/contrats": ContratsDocuments,
     "/agence/notifications": NotificationsAgence,
     "/agence/parametres": Parametres,
@@ -119,6 +123,15 @@ function App() {
     // Rediriger vers le dashboard de son rôle
     window.location.href = userPrefix;
     return null;
+  }
+
+  // Bloquer les agences suspendues (empêche l'accès à toutes les routes /agence/*)
+  if (user.role === "agency" && user.agencyStatus === "suspended") {
+    // Autoriser uniquement la page suspendu
+    if (pathname !== "/agence/suspendu") {
+      window.location.replace("/agence/suspendu");
+      return null;
+    }
   }
 
   const Component = protectedRoutes[pathname];

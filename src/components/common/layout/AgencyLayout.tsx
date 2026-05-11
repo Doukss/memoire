@@ -1,9 +1,12 @@
 import type { ReactNode } from "react";
 import { useAuth } from "../../../context/AuthContext";
+import AgencySuspended from "../../../page/agenceImmobilier/AgencySuspended";
+import { useEffect } from "react";
 
 type AgencyLayoutProps = {
   children: ReactNode;
   agencyName: string;
+  allowWhenSuspended?: boolean;
 };
 
 const navItems = [
@@ -13,13 +16,38 @@ const navItems = [
   { label: "Loyers", href: "/agence/loyers" },
   { label: "Litiges", href: "/agence/litiges" },
   { label: "Statistiques", href: "/agence/statistiques" },
+  { label: "Abonnement", href: "/agence/abonnement" },
   { label: "Contrats & Documents", href: "/agence/contrats" },
   { label: "Notifications", href: "/agence/notifications" },
   { label: "Paramètres", href: "/agence/parametres" },
 ];
 
-function AgencyLayout({ children, agencyName }: AgencyLayoutProps) {
-  const { logout } = useAuth();
+function AgencyLayout({
+  children,
+  agencyName,
+  allowWhenSuspended = false,
+}: AgencyLayoutProps) {
+  const { user, logout } = useAuth();
+
+  // Mettre à jour le statut d'agence en temps réel
+  useEffect(() => {
+    function handleAgencyStatusChange(event: CustomEvent<{ email: string; status: string }>) {
+      if (user?.email === event.detail.email && user.role === "agency") {
+        const users = JSON.parse(localStorage.getItem("kermanager.auth") || "null");
+        if (users) {
+          users.agencyStatus = event.detail.status;
+          localStorage.setItem("kermanager.auth", JSON.stringify(users));
+        }
+      }
+    }
+    
+    window.addEventListener("agencyStatusChanged" as never, handleAgencyStatusChange as never);
+    return () => window.removeEventListener("agencyStatusChanged" as never, handleAgencyStatusChange as never);
+  }, [user?.email, user?.role]);
+
+  if (user?.agencyStatus === "suspended" && !allowWhenSuspended) {
+    return <AgencySuspended />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-950">
@@ -62,7 +90,7 @@ function AgencyLayout({ children, agencyName }: AgencyLayoutProps) {
         <div className="border-t border-slate-200 p-4">
           <button
             onClick={logout}
-            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-red-100 hover:text-slate-950"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

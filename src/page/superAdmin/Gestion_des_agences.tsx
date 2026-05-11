@@ -7,6 +7,27 @@ import {
   type SuperAdminData,
 } from "../../service/ofline/superAdminStorage";
 
+function syncAgencyUser(agency: Agency) {
+  const users = JSON.parse(localStorage.getItem("kermanager.users") || "[]");
+  const existingUserIndex = users.findIndex((u: { email: string }) => u.email === agency.email);
+  
+  const agencyUser = {
+    id: existingUserIndex >= 0 ? users[existingUserIndex].id : Date.now().toString(),
+    email: agency.email,
+    name: agency.name,
+    role: "agency",
+    password: existingUserIndex >= 0 ? users[existingUserIndex].password : "Agence2024!",
+  };
+  
+  if (existingUserIndex >= 0) {
+    users[existingUserIndex] = agencyUser;
+  } else {
+    users.push(agencyUser);
+  }
+  
+  localStorage.setItem("kermanager.users", JSON.stringify(users));
+}
+
 type AgencyForm = {
   name: string;
   email: string;
@@ -136,6 +157,7 @@ function GestionDesAgences() {
       ],
     };
 
+    syncAgencyUser(nextAgency);
     persist(nextData);
     setForm(emptyForm);
     setSelectedAgencyId(nextAgency.id);
@@ -171,7 +193,11 @@ function GestionDesAgences() {
       ],
     };
 
+    syncAgencyUser({ ...target, status: nextStatus });
     persist(nextData);
+    
+    // Notifier les autres onglets/instances de la mise à jour
+    window.dispatchEvent(new CustomEvent("agencyStatusChanged", { detail: { email: target.email, status: nextStatus } }));
   }
 
   return (

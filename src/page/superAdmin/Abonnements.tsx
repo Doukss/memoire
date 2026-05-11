@@ -2,11 +2,23 @@ import { useMemo, useState } from "react";
 import SuperAdminLayout from "../../components/common/layout/SuperAdminLayout";
 import {
   getSuperAdminData,
+  saveSuperAdminData,
   type Payment,
   type PaymentStatus,
   type Subscription,
   type SubscriptionStatus,
+  type SuperAdminData,
 } from "../../service/ofline/superAdminStorage";
+
+function syncAgencyUser(email: string, status: "active" | "suspended") {
+  const users = JSON.parse(localStorage.getItem("kermanager.users") || "[]");
+  const existingUserIndex = users.findIndex((u: { email: string }) => u.email === email);
+  if (existingUserIndex >= 0) {
+    // L'utilisateur existe déjà, pas besoin de créer
+  }
+  // Synchroniser via l'événement
+  window.dispatchEvent(new CustomEvent("agencyStatusChanged", { detail: { email, status } }));
+}
 
 const currencyFormatter = new Intl.NumberFormat("fr-FR", {
   style: "currency",
@@ -67,13 +79,56 @@ function paymentClasses(status: PaymentStatus) {
 }
 
 function Abonnements() {
-  const [data] = useState(() => getSuperAdminData());
+  const [data, setData] = useState<SuperAdminData>(() => getSuperAdminData());
   const [paymentFilter, setPaymentFilter] = useState<"all" | PaymentStatus>(
     "all",
   );
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<
     number | null
   >(data.subscriptions[0]?.id ?? null);
+
+  const persist = (nextData: SuperAdminData) => {
+    setData(nextData);
+    saveSuperAdminData(nextData);
+  };
+
+  const toggleSubscriptionStatus = (subscriptionId: number) => {
+    const target = data.subscriptions.find((s) => s.id === subscriptionId);
+    if (!target) return;
+
+    const nextStatus: SubscriptionStatus = target.status === "suspended" ? "active" : "suspended";
+
+    const nextData: SuperAdminData = {
+      ...data,
+      subscriptions: data.subscriptions.map((sub) =>
+        sub.id === subscriptionId ? { ...sub, status: nextStatus } : sub,
+      ),
+      // Mettre à jour aussi le statut de l'agence
+      agencies: data.agencies.map((agency) =>
+        agency.name === target.agencyName 
+          ? { ...agency, status: nextStatus === "active" ? "active" : "suspended" } 
+          : agency,
+      ),
+      activities: [
+        {
+          id: Date.now(),
+          title: nextStatus === "active" ? "Abonnement réactivé" : "Abonnement suspendu",
+          description: `L'abonnement de ${target.agencyName} est maintenant ${nextStatus === "active" ? "actif" : "suspendu"}.`,
+          time: "A l'instant",
+          type: "agency",
+        },
+        ...data.activities,
+      ],
+    };
+
+    // Find agency email from agencies list and sync
+    const agency = data.agencies.find((a) => a.name === target.agencyName);
+    if (agency) {
+      syncAgencyUser(agency.email, nextStatus === "active" ? "active" : "suspended");
+    }
+
+    persist(nextData);
+  };
 
   const selectedSubscription = useMemo(
     () =>
@@ -207,16 +262,28 @@ function Abonnements() {
                       <td className="px-5 py-4 text-sm text-slate-600">
                         {formatDate(subscription.nextBillingAt)}
                       </td>
-                      <td className="px-5 py-4">
-                        <button
-                          onClick={() =>
-                            setSelectedSubscriptionId(subscription.id)
-                          }
-                          className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-bold text-white transition hover:bg-indigo-700"
-                        >
-                          Détails
-                        </button>
-                      </td>
+<td className="px-5 py-4">
+                         <div className="flex gap-2">
+                           <button
+                             onClick={() =>
+                               setSelectedSubscriptionId(subscription.id)
+                             }
+                             className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-indigo-200 hover:text-indigo-700"
+                           >
+                             Détails
+                           </button>
+                           <button
+                             onClick={() => toggleSubscriptionStatus(subscription.id)}
+                             className={`rounded-lg px-3 py-2 text-xs font-bold text-white transition ${
+                               subscription.status === "active" 
+                                 ? "bg-rose-600 hover:bg-rose-700" 
+                                 : "bg-emerald-600 hover:bg-emerald-700"
+                             }`}
+                           >
+                             {subscription.status === "active" ? "Suspendre" : "Activer"}
+                           </button>
+                         </div>
+                       </td>
                     </tr>
                   ))}
                 </tbody>

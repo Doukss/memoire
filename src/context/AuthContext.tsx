@@ -8,6 +8,7 @@ interface User {
   name: string;
   role: UserRole;
   agencyId?: string;
+  agencyStatus?: "active" | "suspended";
 }
 
 interface AuthContextType {
@@ -48,13 +49,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
         {
           id: "2",
-          email: "agence@dakarprestige.sn",
+          email: "contact@dakarprestige.sn",
           password: "Agence2024!",
           name: "Dakar Prestige Immobilier",
           role: "agency" as UserRole,
         },
         {
           id: "3",
+          email: "hello@terangahomes.sn",
+          password: "Agence2024!",
+          name: "Teranga Homes",
+          role: "agency" as UserRole,
+        },
+        {
+          id: "4",
+          email: "admin@senimmo.sn",
+          password: "Agence2024!",
+          name: "Sen Immo Gestion",
+          role: "agency" as UserRole,
+        },
+        {
+          id: "5",
           email: "locataire@email.sn",
           password: "Locataire2024!",
           name: "Mamadou Fall",
@@ -65,27 +80,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Charger l'utilisateur connecté
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setUser(parsed);
-      } catch {
-        localStorage.removeItem(STORAGE_KEY);
+    const loadUser = () => {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          // Si c'est une agence, vérifier le statut dans superAdminData
+          if (parsed.role === "agency") {
+            const superAdminData = JSON.parse(localStorage.getItem("kermanager.superAdmin") || '{"agencies":[]}');
+            const agency = superAdminData.agencies?.find((a: { email: string }) => a.email === parsed.email);
+            if (agency) {
+              parsed.agencyStatus = agency.status;
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+            }
+          }
+          setUser(parsed);
+        } catch {
+          localStorage.removeItem(STORAGE_KEY);
+        }
       }
-    }
+    };
+
+    loadUser();
     setIsLoading(false);
+
+    // Écouter les changements de localStorage pour la synchronisation en temps réel
+    function handleStorageChange() {
+      loadUser();
+    }
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const users = JSON.parse(localStorage.getItem("kermanager.users") || "[]");
+    const superAdminData = JSON.parse(localStorage.getItem("kermanager.superAdmin") || '{"agencies":[]}');
+    
     const foundUser = users.find((u: { email: string; password: string }) => u.email === email && u.password === password);
 
     if (!foundUser) {
       return { success: false, error: "Email ou mot de passe incorrect" };
     }
 
-    const { password: _, ...userWithoutPassword } = foundUser;
+    // Check if agency is suspended
+    let agencyStatus: "active" | "suspended" | undefined = undefined;
+    if (foundUser.role === "agency") {
+      const agency = superAdminData.agencies?.find((a: { email: string }) => a.email === email);
+      if (agency) {
+        agencyStatus = agency.status;
+      }
+    }
+
+    const userWithStatus = {
+      ...foundUser,
+      agencyStatus,
+    };
+    const { password: _, ...userWithoutPassword } = userWithStatus;
     setUser(userWithoutPassword);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(userWithoutPassword));
     return { success: true };
