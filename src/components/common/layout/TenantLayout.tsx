@@ -9,6 +9,7 @@ type TenantLayoutProps = {
 const navItems = [
   { label: "Dashboard", href: "/locataire" },
   { label: "Mon Logement", href: "/locataire/logement" },
+  { label: "Biens disponibles", href: "/locataire/biens" },
   { label: "Mes Paiements", href: "/locataire/paiements" },
   { label: "Documents", href: "/locataire/documents" },
   { label: "Mon Profil", href: "/locataire/profil" },

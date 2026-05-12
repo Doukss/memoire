@@ -144,6 +144,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (data: RegisterData): Promise<{ success: boolean; error?: string }> => {
     const users = JSON.parse(localStorage.getItem("kermanager.users") || "[]");
+    const superAdminData = JSON.parse(localStorage.getItem("kermanager.superAdmin") || '{"agencies":[],"subscriptions":[]}');
 
     // Vérifier si l'email existe déjà
     if (users.some((u: { email: string }) => u.email === data.email)) {
@@ -157,6 +158,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     users.push(newUser);
     localStorage.setItem("kermanager.users", JSON.stringify(users));
+
+    // Si c'est une agence, l'ajouter au superAdminData avec le plan Professionnel
+    if (data.role === "agency") {
+      const newAgency = {
+        id: Date.now(),
+        name: data.name,
+        email: data.email,
+        status: "active" as const,
+        registeredAt: new Date().toISOString().slice(0, 10),
+      };
+
+      const newSubscription = {
+        id: Date.now() + 1,
+        agencyName: data.name,
+        plan: "Professionnel" as const,
+        status: "trial" as const,
+        monthlyPrice: 15000,
+        startedAt: new Date().toISOString().slice(0, 10),
+        nextBillingAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+      };
+
+      superAdminData.agencies = [...(superAdminData.agencies || []), newAgency];
+      superAdminData.subscriptions = [...(superAdminData.subscriptions || []), newSubscription];
+      localStorage.setItem("kermanager.superAdmin", JSON.stringify(superAdminData));
+    }
 
     const { password: _, ...userWithoutPassword } = newUser;
     setUser(userWithoutPassword);

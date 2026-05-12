@@ -30,6 +30,7 @@ import ContacterAgence from "./page/locataire/ContacterAgence";
 import MonProfil from "./page/locataire/MonProfil";
 import Chat from "./page/locataire/Chat";
 import PaiementEnLigne from "./page/locataire/PaiementEnLigne";
+import BiensDisponibles from "./page/locataire/BiensDisponibles";
 import AgencySuspended from "./page/agenceImmobilier/AgencySuspended";
 
 function App() {
@@ -81,16 +82,17 @@ function App() {
     "/agence/notifications": NotificationsAgence,
     "/agence/parametres": Parametres,
 
-    // Locataire
-    "/locataire": LocataireDashboard,
-    "/locataire/dashboard": LocataireDashboard,
-    "/locataire/paiements": MesPaiements,
-    "/locataire/logement": MonLogement,
-    "/locataire/documents": MesDocuments,
-    "/locataire/contact": ContacterAgence,
-    "/locataire/profil": MonProfil,
-    "/locataire/chat": Chat,
-    "/locataire/paiement-en-ligne": PaiementEnLigne,
+// Locataire
+     "/locataire": LocataireDashboard,
+     "/locataire/dashboard": LocataireDashboard,
+     "/locataire/paiements": MesPaiements,
+     "/locataire/logement": MonLogement,
+     "/locataire/documents": MesDocuments,
+     "/locataire/contact": ContacterAgence,
+     "/locataire/profil": MonProfil,
+     "/locataire/chat": Chat,
+     "/locataire/paiement-en-ligne": PaiementEnLigne,
+     "/locataire/biens": BiensDisponibles,
   };
 
 // Si l'utilisateur n'est pas connecté
