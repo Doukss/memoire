@@ -43,6 +43,7 @@ function buildStats(data: SuperAdminData) {
       value: numberFormatter.format(data.agencies.length),
       helper: "+7 ce mois",
       tone: "indigo",
+      
     },
     {
       label: "Total locataires",

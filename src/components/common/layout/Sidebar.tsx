@@ -1,14 +1,25 @@
 import { useAuth } from "../../../context/AuthContext";
+import {
+  LayoutDashboard,
+  Building2,
+  Users,
+  CreditCard,
+  Scale,
+  BarChart3,
+  Bell,
+  Settings,
+  LogOut
+} from "lucide-react";
 
 const navItems = [
-  { label: "Dashboard", href: "/super-admin" },
-  { label: "Agences", href: "/super-admin/agences" },
-  { label: "Utilisateurs", href: "/super-admin/utilisateurs" },
-  { label: "Abonnements", href: "/super-admin/abonnements" },
-  { label: "Litiges", href: "/super-admin/litiges" },
-  { label: "Statistiques", href: "/super-admin/statistiques" },
-  { label: "Notifications", href: "/super-admin/notifications" },
-  { label: "Parametres", href: "/super-admin/parametres" },
+  { label: "Dashboard", href: "/super-admin", icon: LayoutDashboard },
+  { label: "Agences", href: "/super-admin/agences", icon: Building2 },
+  { label: "Utilisateurs", href: "/super-admin/utilisateurs", icon: Users },
+  { label: "Abonnements", href: "/super-admin/abonnements", icon: CreditCard },
+  { label: "Litiges", href: "/super-admin/litiges", icon: Scale },
+  { label: "Statistiques", href: "/super-admin/statistiques", icon: BarChart3 },
+  { label: "Notifications", href: "/super-admin/notifications", icon: Bell },
+  { label: "Parametres", href: "/super-admin/parametres", icon: Settings },
 ];
 
 function isActiveRoute(href: string) {
@@ -39,6 +50,7 @@ function Sidebar() {
       <nav className="flex-1 space-y-1 px-4 py-6">
         {navItems.map((item) => {
           const active = isActiveRoute(item.href);
+          const Icon = item.icon;
 
           return (
             <a
@@ -50,7 +62,10 @@ function Sidebar() {
                   : "text-slate-300 hover:bg-white/10 hover:text-white"
               }`}
             >
-              <span>{item.label}</span>
+              <div className="flex items-center gap-3">
+                <Icon className="h-5 w-5" />
+                <span>{item.label}</span>
+              </div>
               {active ? (
                 <span className="h-2 w-2 rounded-full bg-white" />
               ) : null}
@@ -70,9 +85,7 @@ function Sidebar() {
           onClick={logout}
           className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-semibold text-slate-300 transition hover:bg-white/10 hover:text-white"
         >
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
+          <LogOut className="h-5 w-5" />
           <span>Déconnexion</span>
         </button>
       </div>
