@@ -16,6 +16,16 @@ type TenantForm = {
   propertyName: string;
 };
 
+interface Invitation {
+  token: string;
+  email: string;
+  tenantName: string;
+  propertyName: string;
+  agencyId: string;
+  createdAt: string;
+  isRegistered: boolean;
+}
+
 const emptyForm: TenantForm = {
   fullName: "",
   email: "",
@@ -189,6 +199,42 @@ function GestionLocataires() {
     };
 
     persist(nextData);
+  }
+
+  function generateInvitationToken(): string {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  }
+
+  function sendWhatsAppInvitation(inviteePhone: string, inviteLink: string) {
+    const message = encodeURIComponent(
+      `Bonjour ! Vous êtes invité(e) à rejoindre KerManager pour votre location. Cliquez sur ce lien pour activer votre compte : ${inviteLink}`
+    );
+    const cleanPhone = inviteePhone.replace(/\s/g, "").replace(/^\+/, "");
+    window.open(`https://wa.me/${cleanPhone}?text=${message}`, "_blank");
+  }
+
+  function handleInviteTenant(tenant: AgencyTenant) {
+    const token = generateInvitationToken();
+    const inviteLink = `${window.location.origin}/invitation?token=${token}`;
+
+    const invitations: Invitation[] = JSON.parse(
+      localStorage.getItem("kermanager.invitations") || "[]"
+    );
+
+    const newInvitation: Invitation = {
+      token,
+      email: tenant.email,
+      tenantName: tenant.fullName,
+      propertyName: tenant.propertyName,
+      agencyId: data.agency.email,
+      createdAt: new Date().toISOString(),
+      isRegistered: false,
+    };
+
+    invitations.push(newInvitation);
+    localStorage.setItem("kermanager.invitations", JSON.stringify(invitations));
+
+    sendWhatsAppInvitation(tenant.phone, inviteLink);
   }
 
   return (
@@ -405,14 +451,26 @@ function GestionLocataires() {
                         {tenant.active ? "Actif" : "Inactif"}
                       </span>
                     </td>
-                    <td className="px-5 py-4">
-                      <button
-                        onClick={() => toggleTenant(tenant.id)}
-                        className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700"
-                      >
-                        {tenant.active ? "Clôturer contrat" : "Réactiver"}
-                      </button>
-                    </td>
+<td className="px-5 py-4">
+                       <div className="flex gap-2">
+                         <button
+                           onClick={() => toggleTenant(tenant.id)}
+                           className="rounded-lg bg-slate-950 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700"
+                         >
+                           {tenant.active ? "Clôturer contrat" : "Réactiver"}
+                         </button>
+                         <button
+                           onClick={() => handleInviteTenant(tenant)}
+                           className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-700 flex items-center gap-1"
+                           title="Inviter via WhatsApp"
+                         >
+                           <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                             <path d="M12 0C5.373 0 0 5.373 0 12c0 2.352.707 4.555 1.904 6.391L0 24l4.263-1.17C6.29 23.293 8.512 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.121 0-3.985-.677-5.522-1.837l-3.747 1.037L3.2 17.87C2.491 16.364 2 14.734 2 13c0-5.523 4.477-10 10-10s10 4.477 10 10-4.477 10-10 10z"/>
+                           </svg>
+                           Inviter
+                         </button>
+                       </div>
+                     </td>
                   </tr>
                 ))}
               </tbody>

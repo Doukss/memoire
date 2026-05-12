@@ -87,7 +87,6 @@ function Abonnements() {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<
     number | null
   >(data.subscriptions[0]?.id ?? null);
-  const [subscriptionsPage, setSubscriptionsPage] = useState(1);
   const [paymentsPage, setPaymentsPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -101,6 +100,7 @@ function Abonnements() {
     if (!target) return;
 
     const nextStatus: SubscriptionStatus = target.status === "suspended" ? "active" : "suspended";
+    const activityId = Date.now();
 
     const nextData: SuperAdminData = {
       ...data,
@@ -114,7 +114,7 @@ function Abonnements() {
       ),
       activities: [
         {
-          id: Date.now(),
+          id: activityId,
           title: nextStatus === "active" ? "Abonnement réactivé" : "Abonnement suspendu",
           description: `L'abonnement de ${target.agencyName} est maintenant ${nextStatus === "active" ? "actif" : "suspendu"}.`,
           time: "A l'instant",

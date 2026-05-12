@@ -172,7 +172,7 @@ function RegisterPage() {
                   </p>
                 </div>
 
-                <div className="mt-8 grid gap-4">
+<div className="mt-8 grid gap-4">
                   <button
                     onClick={() => {
                       setSelectedRole("agency");
@@ -191,23 +191,17 @@ function RegisterPage() {
                     </div>
                   </button>
 
-                  <button
-                    onClick={() => {
-                      setSelectedRole("tenant");
-                      setStep("form");
-                    }}
-                    className="flex items-center gap-4 rounded-lg border-2 border-slate-200 p-5 text-left transition hover:border-emerald-500 hover:bg-emerald-50"
-                  >
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
+                  <div className="rounded-lg border-2 border-slate-200 bg-slate-50 p-5 text-center opacity-75">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 mx-auto">
                       <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
-                    <div>
-                      <p className="font-bold text-slate-950">Locataire</p>
-                      <p className="text-sm text-slate-600">Suivre mes loyers et documents</p>
-                    </div>
-                  </button>
+                    <p className="mt-3 font-bold text-slate-700">Locataire</p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Invitation par l'agence uniquement
+                    </p>
+                  </div>
 
                   <button
                     onClick={() => {

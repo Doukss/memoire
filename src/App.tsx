@@ -4,6 +4,7 @@ import type { ComponentType } from "react";
 import LandingPage from "./page/public/LandingPage";
 import LoginPage from "./page/public/LoginPage";
 import RegisterPage from "./page/public/RegisterPage";
+import TenantInvitation from "./page/public/TenantInvitation";
 import AdminDashboard from "./page/superAdmin/AdminDashboard";
 import GestionDesAgences from "./page/superAdmin/Gestion_des_agences";
 import Utilisateures from "./page/superAdmin/Utilisateures";
@@ -45,15 +46,15 @@ function App() {
     );
   }
 
-  // Routes publiques (sans authentification)
-  const publicRoutes: Record<string, ComponentType> = {
-    "/": LandingPage,
-    "/login": LoginPage,
-    "/register": RegisterPage,
-  };
+// Routes publiques (sans authentification)
+    const publicRoutes: Record<string, ComponentType> = {
+      "/": LandingPage,
+      "/login": LoginPage,
+      "/register": RegisterPage,
+      "/invitation": TenantInvitation,
+    };
 
-  // Routes protégées par rôle
-  const protectedRoutes: Record<string, ComponentType> = {
+    const protectedRoutes: Record<string, ComponentType> = {
     // Super Admin
     "/super-admin": AdminDashboard,
     "/super-admin/dashboard": AdminDashboard,
@@ -92,16 +93,17 @@ function App() {
     "/locataire/paiement-en-ligne": PaiementEnLigne,
   };
 
-  // Si l'utilisateur n'est pas connecté
-  if (!user) {
-    // Routes publiques autorisées sans connexion
-    const publicPaths = ["/", "/login", "/register"];
-    const currentPath = window.location.pathname;
+// Si l'utilisateur n'est pas connecté
+   if (!user) {
+     // Routes publiques autorisées sans connexion
+     const publicPaths = ["/", "/login", "/register", "/invitation"];
+     const currentPath = window.location.pathname;
 
-    if (publicPaths.includes(currentPath)) {
-      const Component = publicRoutes[currentPath] || LandingPage;
-      return <Component />;
-    } else {
+     // Permettre l'accès à la page d'invitation
+     if (publicPaths.includes(currentPath) || currentPath.startsWith("/invitation")) {
+       const Component = publicRoutes[currentPath] || LandingPage;
+       return <Component />;
+     } else {
       // Rediriger vers login si tentative d'accès à une route protégée
       window.location.href = "/login";
       return null;

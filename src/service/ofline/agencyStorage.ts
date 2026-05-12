@@ -20,6 +20,9 @@ export type AgencyTenant = {
   active: boolean;
   joinedAt: string;
   contractStatus: "active" | "ended";
+  invitationToken?: string;
+  invitedAt?: string;
+  isRegistered?: boolean;
 };
 
 export type RentPayment = {
